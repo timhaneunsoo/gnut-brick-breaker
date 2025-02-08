@@ -4,10 +4,20 @@
   <meta charset="utf-8" />
   <style>
 
+    #game-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;  /* Viewport width */
+      height: 100vh; /* Viewport height */
+      overflow: hidden;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
     canvas {
-      border: 2px solid black;
-      margin: 0 auto;
-      display: block;
+      transform-origin: top left;
     }
 
     #button-container {
@@ -40,7 +50,10 @@
 </head>
 
 <body>      
-  <canvas id="canvas" width="720" height="800"></canvas>
+  <div>
+    <canvas id="canvas" width="720" height="800"></canvas>
+  </div>
+  
   <div id="button-container">
     <button onclick="gameManager.downBalls()">Drop Down All Acorns</button>
   </div>
@@ -906,6 +919,19 @@
     const gameManager = new GameManager();
 
     gameManager.run();
+  </script>
+  
+  <script>
+    function scaleCanvas() {
+      let scaleX = window.innerWidth / 720;  // Scale based on original width
+      let scaleY = window.innerHeight / 800; // Scale based on original height
+      let scale = Math.min(scaleX, scaleY);  // Keep aspect ratio
+  
+      document.getElementById("canvas").style.transform = `scale(${scale})`;
+    }
+  
+    window.addEventListener("resize", scaleCanvas);
+    window.addEventListener("load", scaleCanvas);
   </script>
 </body>
 
