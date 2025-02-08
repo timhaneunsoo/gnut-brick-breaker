@@ -18,10 +18,9 @@
 
     canvas {
       display: block;
-      max-width: 100%;
-      max-height: 80vh; /* Ensures it doesn't overlap with the button */
-      width: auto;
-      height: auto;
+      width: 90vw;  /* Take 90% of the screen width */
+      height: auto; /* Keep the aspect ratio */
+      max-height: 80vh; /* Prevent it from overflowing */
       border: 2px solid black;
     }
 
@@ -34,7 +33,7 @@
     }
 
     button {
-      background: transparent;
+      background: rgba(0, 0, 0, 0.7);
       color: white;
       border: 2px solid white;
       border-radius: 5px;
@@ -43,13 +42,6 @@
       text-transform: uppercase;
       cursor: pointer;
       transition: all 0.3s ease-in-out;
-    }
-
-    /* Hover effect */
-    button:hover {
-      background: rgba(255, 255, 255, 0.2);
-      color: #ffcc00;
-      border-color: #ffcc00;
     }
   </style>
 </head>
@@ -927,16 +919,25 @@
   </script>
   
   <script>
-    function scaleCanvas() {
-      let scaleX = window.innerWidth / 720;  // Scale based on original width
-      let scaleY = window.innerHeight / 800; // Scale based on original height
-      let scale = Math.min(scaleX, scaleY);  // Keep aspect ratio
-  
-      document.getElementById("canvas").style.transform = `scale(${scale})`;
-    }
-  
-    window.addEventListener("resize", scaleCanvas);
-    window.addEventListener("load", scaleCanvas);
+    function resizeCanvas() {
+      const canvas = document.getElementById("canvas");
+      const aspectRatio = 720 / 800; // Original canvas aspect ratio
+
+      let newWidth = window.innerWidth * 0.9;
+      let newHeight = newWidth / aspectRatio;
+
+      if (newHeight > window.innerHeight * 0.75) {
+          newHeight = window.innerHeight * 0.75;
+          newWidth = newHeight * aspectRatio;
+      }
+
+      canvas.style.width = `${newWidth}px`;
+      canvas.style.height = `${newHeight}px`;
+  }
+
+  window.addEventListener("resize", resizeCanvas);
+  window.addEventListener("load", resizeCanvas);
+
   </script>
 </body>
 
