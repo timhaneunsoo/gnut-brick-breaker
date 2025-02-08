@@ -3,17 +3,35 @@
 <head>
   <meta charset="utf-8" />
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;  /* Prevent scrolling */
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: transparent;
+    }
+
+    #game-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
 
     #game-container {
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 100vw;  /* Viewport width */
-      height: 100vh; /* Viewport height */
-      overflow: hidden;
-      position: absolute;
-      top: 0;
-      left: 0;
+      flex-grow: 1; /* Takes up available space */
     }
 
     canvas {
@@ -21,43 +39,43 @@
     }
 
     #button-container {
-    display: flex;
-    justify-content: center; /* Centers the button */
-    margin-top: 10px; /* Adjust space between game and button */
-    width: 100%;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      padding: 10px 0;
     }
 
     button {
-    background: transparent;
-    color: white;
-    border: 2px solid white;
-    border-radius: 5px;
-    font-size: 1.5em;
-    padding: 10px 20px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+      border-radius: 5px;
+      font-size: 1.5em;
+      padding: 10px 20px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
     }
 
     /* Hover effect */
     button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: #ffcc00;
-    border-color: #ffcc00;
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffcc00;
+      border-color: #ffcc00;
     }
 
   </style>
 </head>
 
 <body>      
-  <div>
-    <canvas id="canvas" width="720" height="800"></canvas>
+  <div id="game-wrapper">
+    <div id="game-container">
+      <canvas id="canvas"></canvas>
+    </div>
+    <div id="button-container">
+      <button onclick="gameManager.downBalls()">Drop Down All Acorns</button>
+    </div>
   </div>
-  
-  <div id="button-container">
-    <button onclick="gameManager.downBalls()">Drop Down All Acorns</button>
-  </div>
-
 
   <iframe id="dextools-widget"
     title="DexTools Trading Chart"
