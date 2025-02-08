@@ -14,7 +14,7 @@
       justify-content: center;
       align-items: center;
       background: white;
-      opacity: 0.9;
+      opacity: 0.95;
     }
 
     canvas {
@@ -906,12 +906,15 @@
     }
 
     canvas.addEventListener("mousemove", (e) => {
-      const scale = ctx.scale;
-      const offset = ctx.offset;
-      const mx = e.pageX - canvas.offsetLeft;
-      const my = e.pageY;
+        const rect = canvas.getBoundingClientRect();
+        
+        const scaleX = canvas.width / rect.width;  // Scale factor for width
+        const scaleY = canvas.height / rect.height; // Scale factor for height
 
-      Mouse.position = new Vector(mx, my);
+        const mx = (e.clientX - rect.left) * scaleX;
+        const my = (e.clientY - rect.top) * scaleY;
+
+        Mouse.position = new Vector(mx, my);
     });
 
     const gameManager = new GameManager();
