@@ -13,7 +13,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background: white;
+      background: lightgray;
       opacity: 0.99;
     }
 
@@ -23,9 +23,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      pointer-events: auto; /* Ensure the game captures interactions */
-      border: 2px solid black;
-      box-sizing: border-box;
+      pointer-events: auto;
     }
 
     #canvas {
@@ -53,6 +51,8 @@
       width: 100%;
       position: absolute;
       bottom: 10px;
+      left: 0;
+      right: 0;
     }
 
     button {
@@ -65,6 +65,50 @@
       text-transform: uppercase;
       cursor: pointer;
       transition: all 0.3s ease-in-out;
+      width: auto;
+      white-space: nowrap;
+    }
+
+    #reset-button {
+        background: rgba(255, 0, 0, 0.7); /* Red Transparent */
+        color: white;
+        border: 2px solid white;
+        border-radius: 5px;
+        font-size: 1.5em;
+        padding: 10px 20px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+    }
+
+    #reset-button:hover {
+        background: rgba(255, 0, 0, 1);
+    }
+
+    /* Add this new container for game over elements */
+    #game-over-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        z-index: 10;
+        display: none;
+    }
+
+    #game-over-text {
+        color: white;
+        font-size: 40px;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Modify existing reset container */
+    #reset-container {
+        position: relative;
+        display: none;
+        justify-content: center;
+        width: 100%;
     }
   </style>
 </head>
@@ -76,6 +120,12 @@
     </div>
     <div id="button-container">
       <button onclick="gameManager.downBalls()">Drop Down All Acorns</button>
+    </div>
+    <div id="game-over-container">
+      <div id="game-over-text">GAME OVER</div>
+      <div id="reset-container">
+        <button id="reset-button" onclick="gameManager.resetGame()">RESET</button>
+      </div>
     </div>
   </div>
 
@@ -648,10 +698,8 @@
       }
 
       gameOver() {
-        fillRect(0, height / 2 - 100, width, 200, "rgba(0, 0, 0, 0.3)");
-        ctx.font = "40px Arial";
-        ctx.fillText("GAME OVER", width / 2 - 40, height / 2 + 12);
-        ctx.font = "20px Arial";
+          document.getElementById("game-over-container").style.display = "block";
+          document.getElementById("reset-container").style.display = "flex";
       }
     }
 
@@ -819,6 +867,7 @@
 
     class GameManager {
       constructor() {
+        this.animationFrameId = null;
         this.state = {
           ballPos: new Vector(width / 2, height - 100),
           ballMoving: false,
@@ -892,6 +941,10 @@
       }
 
       run() {
+        if (this.animationFrameId) {
+          window.cancelAnimationFrame(this.animationFrameId);
+        }
+
         this.draw();
         this.checkCollision();
 
@@ -918,12 +971,50 @@
           this.state.over = true;
         }
 
-        window.requestAnimationFrame(() => this.run());
+        this.animationFrameId = window.requestAnimationFrame(() => this.run());
       }
 
       downBalls() {
         this.state.ballDowning = true;
         this.balls.down();
+      }
+      resetGame() {
+        // Cancel current animation frame
+        if (this.animationFrameId) {
+          window.cancelAnimationFrame(this.animationFrameId);
+          this.animationFrameId = null;
+        }  
+        
+        // Hide reset and game over elements
+          document.getElementById("game-over-container").style.display = "none";
+          document.getElementById("reset-container").style.display = "none";
+
+          // Reset game state
+          this.state = {
+              ballPos: new Vector(width / 2, height - 100),
+              ballMoving: false,
+              ballCount: 1,
+              ballDowning: false,
+              brickMoving: false,
+              firstBallStop: true,
+              level: 1,
+              over: false,
+          };
+
+          this.balls = new Balls(this.state);
+          this.bricks = new Bricks();
+          this.bonusBalls = new BonusBalls();
+          this.ui = new UI();
+          this.scoreStorage = new LocalStorageManager();
+          this.state.bestLevel = this.scoreStorage.getBestScore();
+
+          this.addBallsAndBricks();
+
+          // **Clear the canvas before restarting**
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // Restart game loop
+          this.run();
       }
     }
 
